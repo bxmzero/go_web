@@ -35,7 +35,10 @@ func extractTx(ctx context.Context) (*gorm.DB, bool) {
 	tx, ok := ctx.Value(txKey).(*gorm.DB)
 	return tx, ok
 }
-
+//ctx：外部传入的上下文（context.Context）。
+//fn：一个回调函数，类型是 func(txCtx context.Context) error，它在事务中执行实际的数据库操作。
+//回调函数 fn 是传递给 WithinTransaction 的实际操作（例如数据库查询、更新等）,在调用的时候需要实现的匿名函数
+//这个函数的作用就是，让匿名函数fn的入参txCtx一定是携带了事务DB的上下文
 func (m *manager) WithinTransaction(ctx context.Context, fn func(txCtx context.Context) error) error {
 	if ctx == nil {
 		ctx = context.Background()
