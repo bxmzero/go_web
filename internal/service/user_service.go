@@ -95,6 +95,8 @@ func (s *userService) UpdateUser(ctx context.Context, id string, input UpdateUse
 		return nil, err
 	}
 
+	//这里就是调用事务处理器开启事务，入参 ctx上下文和匿名函数的实现func(txCtx context.Context) ，匿名函数实现内容主要是sql操作。
+	/这里要注意为什么dao层的函数不能直接用ctx，因为ctx可能携带也可能不携带事务DB，这个获取逻辑是写在Manager.WithinTransaction的声明过程中的,这个过程里帮回调函数的入参获取到携带事务的上下文。
 	if err := s.txManager.WithinTransaction(ctx, func(txCtx context.Context) error {
 		if _, err := s.repo.GetByID(txCtx, id); err != nil {
 			return err
